@@ -5,7 +5,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-
 # no modificar
 def retrieve_phone_code(driver) -> str:
     """Este código devuelve un número de confirmación de teléfono y lo devuelve como un string.
@@ -53,9 +52,11 @@ class UrbanRoutesPage:
     payment_close_button = (By.XPATH, '//*[@id="root"]/div/div[2]/div[2]/div[1]/button')
     comment_to_driver = (By.ID, 'comment')
     blanket_button = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[4]/div[2]/div[1]/div/div[2]/div/span')
-    ice_cream_counter_plus = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[4]/div[2]/div[3]/div/div[2]/div[1]/div/div[2]/div/div[3]')
+#Exploración de otro tipo de selector
+    ice_cream_counter_plus = (By.CSS_SELECTOR, '#root > div > div.workflow > div.workflow-subcontainer > div.tariff-picker.shown > div.form > div.reqs.open > div.reqs-body > div.r.r-type-group > div > div.r-group-items > div:nth-child(1) > div > div.r-counter > div > div.counter-plus')
     intro_code_chart = (By.XPATH, '//*[@id="root"]/div/div[1]/div[2]/div[2]/form/div[1]/div[1]/label')
     confirm_button = (By.XPATH, '//*[@id="root"]/div/div[1]/div[2]/div[2]/form/div[2]/button[1]')
+    confirmation_service_button = (By.CSS_SELECTOR, '#root > div > div.workflow > div.smart-button-wrapper > button > span.smart-button-secondary')
 
 
     def __init__(self, driver): #Constructor de clase
@@ -169,21 +170,22 @@ class TestUrbanRoutes:
         assert routes_page.get_from() == address_from
         assert routes_page.get_to() == address_to
 
+#Modificaciones después de la primera entrega
 
-    def test_set_taxi_and_comfort_rate(self):
+    def test_select_plan(self):
         rate_page = UrbanRoutesPage.UrbanRoutesPage(self.driver)
         rate_page.click_ask_taxi_button()
         rate_page.click_comfort_button()
         assert rate_page.get_blanket_button() == 'Manta y pañuelos'
 
-    def test_phone_interaction(self):
+    def test_fill_phone_number(self):
         form_page = UrbanRoutesPage.UrbanRoutesPage(self.driver)
         form_page.click_phone_number_container()
         phone_number = data.phone_number
         form_page.filling_phone_number_field(phone_number)
         assert form_page.get_phone() == phone_number
 
-    def test_card_interactions(self):
+    def test_fill_card_(self):
         card_form = UrbanRoutesPage.UrbanRoutesPage(self.driver)
         card_form.click_payment_button()
         card_form.click_add_card_button()
@@ -196,21 +198,25 @@ class TestUrbanRoutes:
         card_form.click_add_button()
         card_form.click_payment_close_button()
 
-    def test_comment_to_driver(self):
+    def test_comment_for_driver(self):
         comment_form = UrbanRoutesPage.UrbanRoutesPage(self.driver)
         comment = data.message_for_driver
         comment_form.add_comment_to_driver(comment)
         assert comment_form.get_comment_to_driver() == comment
 
-    def test_blanket_request(self):
+    def test_blanket_and_handkerchiefs(self):
         requests_form = UrbanRoutesPage.UrbanRoutesPage(self.driver)
         requests_form.click_blanket_button()
         assert requests_form.blanket_button.is_selected() == True
 
-    def test_ice_cream_request(self):
+    def test_order_2_ice_creams(self):
         requests_form = UrbanRoutesPage.UrbanRoutesPage(self.driver)
         requests_form.add_ice_cream_counter_plus()
         assert requests_form.get_ice_cream_counter_plus_value() == 2
+
+    def test_car_search_model_appears(self):
+        service_confirm = UrbanRoutesPage.UrbanRoutesPage(self.driver)
+        service_confirm.click_confirmation_service_button()
 
 
     @classmethod
